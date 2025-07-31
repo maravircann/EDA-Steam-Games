@@ -1,7 +1,6 @@
 # Steam Games – Exploratory Data Analysis (EDA)
 
 This project presents an exploratory data analysis on a dataset of Steam games, using Python libraries such as pandas, matplotlib, and seaborn.  
-It was created as part of my preparation for a Data Engineer internship at Gameloft, and focuses on identifying trends in pricing, genres, user ratings, and release patterns.
 
 ## Dataset
 
