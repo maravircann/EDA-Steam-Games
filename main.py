@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+
 sns.set(style='darkgrid')
 df = pd.read_csv('steam.csv')
 
@@ -140,12 +142,39 @@ plt.title('PCA – Game Distribution (2D Projection)')
 plt.xlabel('Game Popularity')
 plt.ylabel('Player Engagement')
 plt.tight_layout()
-plt.show()
+#plt.show()
 
-# the PCA distribution shows that most games on Steam are neither highly popular nor highly engaging.
-# however, a few clear outliers stand out — these are games that perform exceptionally well in both popularity and player engagement, such as highly-rated titles with large player bases and long average playtimes.
-# this supports the idea that while most games struggle to gain traction, top-performing games tend to succeed on multiple fronts.
-
+# the PCA projection reveals a strong concentration of games in the lower-left quadrant, suggesting that most titles on Steam have moderate to low popularity and player engagement.
+# s few clear outliers are visible, likely representing top-tier games with either massive player bases or very high engagement times.
+# the fan-like shape of the distribution also suggests trade-offs: some games excel in popularity, others in engagement, but few in both simultaneously.
 
 # k clustering to reduce the complexity of the pca data and automaticaly group games based on the 2 principal components
 
+kmeans=KMeans(n_clusters=3, random_state=42)
+kmeans.fit(pca_df)
+pca_df['cluster']=kmeans.labels_
+
+
+print(pca_df.columns)
+
+
+plt.figure(figsize=(10, 6))
+sns.scatterplot(
+    x='pc1',
+    y='pc2',
+    hue='cluster',
+    data=pca_df,
+    palette='Set2',
+    alpha=0.7
+)
+plt.title('KMeans Clustering of Games in PCA Space')
+plt.xlabel('PC1 – Game Popularity')
+plt.ylabel('PC2 – Player Engagement')
+plt.legend(title='Cluster')
+plt.tight_layout()
+#plt.show()
+
+df_selected['cluster'] = pca_df['cluster']
+cluster_summary = df_selected.groupby('cluster').mean(numeric_only=True)
+print(cluster_summary)
+cluster_summary.to_csv('clusterSummary', index=True)
